@@ -9,13 +9,21 @@ class MoviesController < ApplicationController
   def index
     @all_ratings = Movie.all_ratings
     @order = params[:order]
-    @ratings_selected = params["ratings"]
-   
-    #if params[:commit]=='Refresh'
-       @movies = @ratings_selected==nil ? Movie.order(@order) :  Movie.order(@order).find_all_by_rating(@ratings_selected.keys)
-    #else#no hizo click btn   
-    #   @movies =  Movie.order(@order)
-    #end   
+    @ratings_selected = params[:ratings]
+    
+    if @order  == nil
+       @order = session[:order] 
+    else
+       session[:order] = @order #almaceno nuevo order
+    end
+          
+    if params[:commit] == 'Refresh' #cliente hizo una eleccion de filtros => guardo estos filtros en la sesion
+       session[:ratings_selected] = @ratings_selected
+    else
+       @ratings_selected =  session[:ratings_selected]
+    end
+           
+    @movies = @ratings_selected==nil ? Movie.order(@order) :  Movie.order(@order).find_all_by_rating(@ratings_selected.keys)
   end
 
   def new
