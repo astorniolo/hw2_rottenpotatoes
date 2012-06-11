@@ -7,12 +7,15 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @all_ratings = Movie.all_ratings
     @order = params[:order]
-    if @order == nil
-       @movies = Movie.all
-    else
-      @movies = @order == 'title' ?  Movie.order('title') : Movie.order('release_date')
-    end
+    @ratings_selected = params["ratings"]
+   
+    #if params[:commit]=='Refresh'
+       @movies = @ratings_selected==nil ? Movie.order(@order) :  Movie.order(@order).find_all_by_rating(@ratings_selected.keys)
+    #else#no hizo click btn   
+    #   @movies =  Movie.order(@order)
+    #end   
   end
 
   def new
